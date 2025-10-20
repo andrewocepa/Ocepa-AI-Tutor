@@ -1,5 +1,4 @@
-
-import { GoogleGenAI, Content, GenerateContentResponse } from "@google/genai";
+import { GoogleGenAI, Content } from "@google/genai";
 import { OCEPA_AI_SYSTEM_PROMPT } from '../../constants';
 
 // The 'Handler' and 'HandlerEvent' types are provided by Netlify's functions environment.
@@ -33,28 +32,19 @@ export default async (request: Request): Promise<Response> => {
       return new Response(JSON.stringify({ error: 'Request body must contain a non-empty "history" array.' }), { status: 400 });
     }
     
+    // The entire history from the client is the 'contents' for the API call.
     const contents: Content[] = history.map(msg => ({
         role: msg.role,
         parts: [{ text: msg.text }]
     }));
 
-    // The last message is the new prompt. The rest is the chat history.
-    const lastMessage = contents.pop();
-    if (!lastMessage || lastMessage.role !== 'user' || !lastMessage.parts[0]?.text) {
-        return new Response(JSON.stringify({ error: 'The last message in history must be from the user.' }), { status: 400 });
-    }
-    const currentPrompt = lastMessage.parts[0].text;
-    const chatHistory = contents;
-
-    const chat = ai.chats.create({
+    const stream = await ai.models.generateContentStream({
         model: model,
-        history: chatHistory,
+        contents: contents, // Pass the whole conversation directly
         config: {
             systemInstruction: OCEPA_AI_SYSTEM_PROMPT,
         }
     });
-
-    const stream = await chat.sendMessageStream({ message: currentPrompt });
     
     // Create a new ReadableStream to send back to the client
     const readableStream = new ReadableStream({
