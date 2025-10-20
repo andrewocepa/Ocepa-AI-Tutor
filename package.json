@@ -1,0 +1,9 @@
+{
+  "name": "ocepa-ai-tutor",
+  "version": "1.0.0",
+  "description": "AI Tutor for Ugandan A'Level Students",
+  "private": true,
+  "dependencies": {
+    "@google/genai": "^1.25.0"
+  }
+}
