@@ -34,6 +34,7 @@ The initial version of the application focuses on delivering the core chat-based
 -   ✅ **Loading State:** A visual indicator shows when the AI is processing a request.
 -   ✅ **AI Persona Adherence:** The AI successfully follows the detailed instructions in the system prompt to tailor its responses.
 -   ✅ **Markdown Rendering:** AI responses are parsed as Markdown, correctly displaying lists, bold/italic text, and other rich formatting.
+-   ✅ **Critical Bug Fix:** Resolved a "stale state" issue in the chat logic that caused the AI to respond to the user's previous message instead of the current one. The chat history sent to the AI is now always correct and up-to-date.
 -   ✅ **Secure & Deployed:** The app is successfully deployed on Netlify. The Gemini API key is fully protected by a serverless function proxy.
 
 ---

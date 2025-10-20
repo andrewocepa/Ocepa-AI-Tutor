@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import HistorySidebar from './components/HistorySidebar';
 import ChatInterface from './components/ChatInterface';
@@ -82,15 +83,18 @@ const App: React.FC = () => {
     if (!currentChatId) return;
 
     const userMessage = { role: 'user' as const, text: messageText };
+    
+    // This variable will hold the updated state to avoid stale closures.
     let updatedSessions: ChatSession[];
 
-    // Update state immediately with user message
+    // 1. Update state with the user's message and get the new state.
     setChatSessions(prev => {
         updatedSessions = prev.map(session => {
             if (session.id === currentChatId) {
-                // If this is the first message, update the title
-                const newTitle = session.messages.length === 0 
-                    ? messageText.substring(0, 30) + (messageText.length > 30 ? '...' : '') 
+                const isFirstMessage = session.messages.length === 0;
+                // If this is the first message, update the chat title
+                const newTitle = isFirstMessage 
+                    ? messageText.substring(0, 35) + (messageText.length > 35 ? '...' : '') 
                     : session.title;
                 
                 return {
@@ -106,19 +110,18 @@ const App: React.FC = () => {
 
     setIsLoading(true);
 
-    const currentSession = chatSessions.find(s => s.id === currentChatId);
-    const history = currentSession ? [...currentSession.messages, userMessage] : [userMessage];
+    // 2. Use the *updated* session from the new state to create the API history.
+    // The '!' asserts that the session exists, which is safe here.
+    const currentSessionForApi = updatedSessions!.find(s => s.id === currentChatId)!;
     
-    const aiResponseText = await getChatResponse(history);
+    const aiResponseText = await getChatResponse(currentSessionForApi.messages);
     const aiMessage = { role: 'model' as const, text: aiResponseText };
     
-    // Update state with AI response
+    // 3. Update state with the AI's response.
     setChatSessions(prev => 
         prev.map(session => {
             if (session.id === currentChatId) {
-                 // Re-find the session in the latest state to append the AI message
-                const currentMessages = prev.find(s => s.id === currentChatId)?.messages || [];
-                return { ...session, messages: [...currentMessages, aiMessage] };
+                return { ...session, messages: [...session.messages, aiMessage] };
             }
             return session;
         })
