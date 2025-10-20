@@ -1,34 +1,35 @@
- [build]
-   command = "npm run build"
-   publish = "dist"
-   functions = "netlify/functions"
+ # [build]
+ #   command = "npm run build"
+ #   publish = "dist"
+ #   functions = "netlify/functions"
   #This file configures the deployment settings for Netlify.
   #It contains the instructions that tell the Netlify platform how to build and deploy your application correctly.
 
 # The [build] block specifies the main commands and directories for the build process.
-#[build]
+[build]
   # 'command' is the single script Netlify will run to build your project.
   # 'vite build' compiles all the React and TypeScript code (.tsx files) into standard, static HTML, CSS, and JavaScript files that browsers can understand.
-  #command = "vite build"
+  command = "vite build"
 
   # 'publish' tells Netlify which folder contains the final, built website.
   # After the 'vite build' command finishes, Vite places all the resulting files into the 'dist' directory.
-  #publish = "dist"
+  publish = "dist"
 
   # 'functions' tells Netlify where to find your serverless function code.
   # Our secure Gemini API proxy is located in this directory.
-  ##functions = "netlify/functions"
+  functions = "netlify/functions"
 
 # The [[functions]] block provides specific configuration for the serverless functions.
-#[[functions]]
+[[functions]]
   # This line is critical. It ensures that files required by our serverless function are included in the deployment package.
   # Our 'gemini-proxy.ts' function imports the system prompt from '../../constants.ts'.
   # Without 'included_files', Netlify would only package the function itself, and the import would fail.
-  #included_files = ["constants.ts"]
+  included_files = ["constants.ts"]
 
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+# [[redirects]]
+#   from = "/*"
+#   to = "/index.html"
+#   status = 200
+
 
 
