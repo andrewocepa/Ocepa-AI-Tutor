@@ -25,7 +25,7 @@ The initial version of the application focuses on delivering the core chat-based
 
 ---
 
-## 3. What Currently Works
+## 3. MVP Status: Complete & Deployed
 
 -   ✅ **Sending & Receiving Messages:** Users can type questions and get responses from the Gemini AI model.
 -   ✅ **Chat Session Management:** Users can start new chats, switch between previous conversations, rename chats, and delete chats.
@@ -33,7 +33,8 @@ The initial version of the application focuses on delivering the core chat-based
 -   ✅ **Responsive UI:** The layout correctly adapts to different screen sizes, with a collapsible sidebar on mobile.
 -   ✅ **Loading State:** A visual indicator shows when the AI is processing a request.
 -   ✅ **AI Persona Adherence:** The AI successfully follows the detailed instructions in the system prompt to tailor its responses.
--   ✅ **Secure API Key Handling:** The app is deployed with a serverless function that acts as a secure proxy, preventing the Gemini API key from being exposed in the frontend code.
+-   ✅ **Markdown Rendering:** AI responses are parsed as Markdown, correctly displaying lists, bold/italic text, and other rich formatting.
+-   ✅ **Secure & Deployed:** The app is successfully deployed on Netlify. The Gemini API key is fully protected by a serverless function proxy.
 
 ---
 
@@ -60,18 +61,28 @@ The architecture for the MVP was chosen to prioritize simplicity, rapid developm
     -   **Why:** To keep the setup simple and fast, the project uses an `importmap` in `index.html`. This allows the browser to directly import modules from a CDN without needing a local build tool like Vite or Webpack.
 
 -   **Deployment & Security:** **Netlify with Serverless Functions**.
-    -   **Why:** Netlify provides free, robust hosting with a seamless Git-based workflow (Continuous Deployment). To secure the Gemini API key, we use a **serverless function** as a proxy. The frontend app calls our own serverless function, which then securely adds the `API_KEY` (stored as a secret environment variable on Netlify) and calls the Google API. This critical step ensures the API key is never exposed to the user's browser.
+    -   **Why:** Netlify provides free, robust hosting with a seamless Git-based workflow (Continuous Deployment). To secure the Gemini API key, we use a **serverless function** as a proxy. The frontend app calls our own serverless function, which then securely adds the `API_KEY` (stored as a secret environment variable on Netlify) and calls the Google API. This critical step ensures the API key is never exposed to the user's browser. Deployment settings are explicitly defined in a `netlify.toml` file within the repository to ensure consistent, reliable builds.
 
 ---
 
-## 5. Future Roadmap
+## 5. Deployment Summary
+
+-   **Platform:** Netlify
+-   **Status:** Live
+-   **Frontend:** The static frontend (`index.html`, etc.) is served directly from the root of the repository. There is no build step for the client-side code, as modern browsers handle the ES modules via an import map.
+-   **Backend (API Proxy):** A serverless function (`netlify/functions/gemini-proxy.ts`) handles all communication with the Google Gemini API. This function is responsible for securely attaching the `API_KEY`.
+-   **Configuration:** Deployment is configured via the `netlify.toml` file in the project's root. This file dictates the publish directory (`.`) and functions directory (`netlify/functions`), overriding any UI settings in Netlify and ensuring consistent deployments.
+-   **API Key Management:** The `API_KEY` is stored as a secret environment variable within the Netlify site settings. It is only accessible to the serverless function during its execution, never to the frontend.
+
+---
+
+## 6. Future Roadmap
 
 The following features are planned for future iterations to enhance the application's capabilities and user experience.
 
 -   **User Authentication:** Implement a user login system (e.g., using Firebase Auth) to enable a personalized experience.
 -   **Cloud Database Sync:** Replace `localStorage` with a cloud database (like Firestore) to sync user chat history across multiple devices.
 -   **Streaming Responses:** Modify the `geminiService` to use the `sendMessageStream` method. This will display the AI's response token-by-token, creating a much more interactive and "live" feel.
--   **Markdown Rendering:** Render the AI's responses as Markdown to properly display formatting like lists, bold/italic text, tables, and code blocks.
 -   **Voice Input:** Add a microphone icon to the input field to allow users to ask questions using voice-to-text.
 -   **Share/Export Chat:** Add functionality to allow users to share a link to a conversation or export it as a text or PDF file.
 -   **Enhanced Error Handling:** Provide more user-friendly and specific error messages for API failures or network issues.

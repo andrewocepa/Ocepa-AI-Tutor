@@ -5,5 +5,8 @@
   "private": true,
   "dependencies": {
     "@google/genai": "^1.25.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
   }
 }
